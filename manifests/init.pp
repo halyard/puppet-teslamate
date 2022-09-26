@@ -1,7 +1,6 @@
 # @summary Configure TeslaMate instance
 #
-# @param datadir handles storage of Postgres data
-# @param mqttdir handles storage of mqtt messages
+# @param datadir handles storage of Postgres and MQTT data
 # @param database_password sets the postgres password for teslamate
 # @param encryption_key sets the key used to encrypt tesla API tokens
 # @param teslamate_ip sets the IP of the teslamate container
@@ -9,7 +8,6 @@
 # @param mqtt_ip sets the IP of the mqtt container
 class teslamate (
   String $datadir,
-  String $mqttdir,
   String $database_password,
   String $encryption_key,
   String $teslamate_ip = '172.17.0.2',
@@ -34,7 +32,7 @@ class teslamate (
     table  => 'nat',
   }
 
-  file { [$datadir, $mqttdir, "${mqttdir}/data", "${mqttdir}/config"]:
+  file { [$datadir, "${datadir}/postgres", "${datadir}/mqtt_config", "${datadir}/mqtt_data"]:
     ensure => directory,
   }
 
@@ -48,18 +46,18 @@ class teslamate (
       '-e POSTGRES_DB=teslamate',
     ],
     cmd     => '',
-    require => File["${datadir}/data"],
+    require => File["${datadir}/postgres"],
   }
 
   docker::container { 'mqtt':
     image   => 'eclipse-mosquitto:2',
     args    => [
       "--ip ${mqtt_ip}",
-      "-v ${mqttdir}/data:/mosquitto/data",
-      "-v ${mqttdir}/config:/mosquitto/config",
+      "-v ${datadir}/mqtt_data:/mosquitto/data",
+      "-v ${datadir}/mqtt_config:/mosquitto/config",
     ],
     cmd     => 'mosquitto -c /mosquitto-no-auth.conf',
-    require => [File["${mqttdir}/data"], File["${mqttdir}/config"]],
+    require => [File["${datadir}/mqtt_config"], File["${datadir}/mqtt_data"]],
   }
 
   docker::container { 'teslamate':
