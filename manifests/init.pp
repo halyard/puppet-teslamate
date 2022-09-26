@@ -44,7 +44,7 @@ class teslamate (
   firewall { '101 allow cross container from teslamate to postgres':
     chain       => 'FORWARD',
     action      => 'accept',
-    proto       => 'all',
+    proto       => 'tcp',
     source      => $teslamate_ip,
     destination => $postgres_ip,
     dport       => 5432,
@@ -53,7 +53,7 @@ class teslamate (
   firewall { '101 allow cross container from teslamate to mqtt':
     chain       => 'FORWARD',
     action      => 'accept',
-    proto       => 'all',
+    proto       => 'tcp',
     source      => $teslamate_ip,
     destination => $mqtt_ip,
     dport       => 1883,
