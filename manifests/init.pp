@@ -41,7 +41,7 @@ class teslamate (
     table  => 'nat',
   }
 
-  file { ["${datadir}/postgres", "${datadir}/mqtt_config", "${datadir}/mqtt_data"]:
+  file { [$datadir, "${datadir}/postgres", "${datadir}/mqtt_config", "${datadir}/mqtt_data"]:
     ensure => directory,
   }
 
