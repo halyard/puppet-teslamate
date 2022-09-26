@@ -19,7 +19,7 @@ class teslamate (
     jump   => 'DNAT',
     proto  => 'tcp',
     dport  => 80,
-    todest => "${teslamate_ip}:4000,
+    todest => "${teslamate_ip}:4000",
     table  => 'nat',
   }
 
