@@ -49,7 +49,7 @@ class teslamate (
     image   => 'postgres:14',
     args    => [
       "--ip ${postgres_ip}",
-      "-v ${datadir}/data:/var/lib/postgresql/data",
+      "-v ${datadir}/postgres:/var/lib/postgresql/data",
       '-e POSTGRES_USER=teslamate',
       "-e POSTGRES_PASSWORD=${database_password}",
       '-e POSTGRES_DB=teslamate',
