@@ -14,6 +14,15 @@ class teslamate (
   String $postgres_ip = '172.17.0.3',
   String $mqtt_ip = '172.17.0.4',
 ) {
+  firewall { '100 dnat for teslamate':
+    chain  => 'DOCKER_EXPOSE',
+    jump   => 'DNAT',
+    proto  => 'tcp',
+    dport  => 80,
+    todest => "${teslamate_ip}:4000,
+    table  => 'nat',
+  }
+
   firewall { '100 dnat for postgres':
     chain  => 'DOCKER_EXPOSE',
     jump   => 'DNAT',
