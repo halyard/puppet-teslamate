@@ -1,0 +1,16 @@
+{
+  "name": "halyard-teslamate",
+  "version": "0.0.1",
+  "author": "Les Aker",
+  "license": "MIT",
+  "summary": "Configure teslamate instance",
+  "source": "https://github.com/halyard/puppet-teslamate",
+  "project_page": "https://github.com/halyard/puppet-teslamate",
+  "issues_url": "https://github.com/halyard/puppet-teslamate/issues",
+  "dependencies": [
+
+  ],
+  "operatingsystem_support": [
+
+  ]
+}
