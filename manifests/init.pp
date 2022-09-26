@@ -41,6 +41,24 @@ class teslamate (
     table  => 'nat',
   }
 
+  firewall { '101 allow cross container from teslamate to postgres':
+    chain       => 'FORWARD',
+    action      => 'accept',
+    proto       => 'all',
+    source      => $teslamate_ip,
+    destination => $postgres_ip,
+    dport       => 5432,
+  }
+
+  firewall { '101 allow cross container from teslamate to mqtt':
+    chain       => 'FORWARD',
+    action      => 'accept',
+    proto       => 'all',
+    source      => $teslamate_ip,
+    destination => $mqtt_ip,
+    dport       => 1883,
+  }
+
   file { [$datadir, "${datadir}/postgres", "${datadir}/mqtt_config", "${datadir}/mqtt_data"]:
     ensure => directory,
   }
