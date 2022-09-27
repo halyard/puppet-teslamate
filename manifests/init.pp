@@ -72,7 +72,7 @@ class teslamate (
       "-e POSTGRES_PASSWORD=${database_password}",
       '-e POSTGRES_DB=teslamate',
     ],
-    cmd     => '',
+    cmd     => '-c ssl=on -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key',
     require => File["${datadir}/postgres"],
   }
 
