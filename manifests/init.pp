@@ -6,6 +6,12 @@
 # @param teslamate_ip sets the IP of the teslamate container
 # @param postgres_ip sets the IP of the postgres container
 # @param mqtt_ip sets the IP of the mqtt container
+# @param postgres_watchdog sets the watchdog URL for postgres dumps
+# @param backup_target sets the target repo for backups
+# @param backup_watchdog sets the watchdog URL to confirm backups are working
+# @param backup_password sets the encryption key for backup snapshots
+# @param backup_environment sets the env vars to use for backups
+# @param backup_rclone sets the config for an rclone backend
 class teslamate (
   String $datadir,
   String $database_password,
@@ -13,6 +19,12 @@ class teslamate (
   String $teslamate_ip = '172.17.0.2',
   String $postgres_ip = '172.17.0.3',
   String $mqtt_ip = '172.17.0.4',
+  Optional[String] $postgres_watchdog = undef,
+  Optional[String] $backup_target = undef,
+  Optional[String] $backup_watchdog = undef,
+  Optional[String] $backup_password = undef,
+  Optional[Hash[String, String]] $backup_environment = undef,
+  Optional[String] $backup_rclone = undef,
 ) {
   firewall { '100 dnat for teslamate':
     chain  => 'DOCKER_EXPOSE',
@@ -59,8 +71,14 @@ class teslamate (
     dport       => 1883,
   }
 
-  file { [$datadir, "${datadir}/postgres", "${datadir}/mqtt_config", "${datadir}/mqtt_data"]:
-    ensure => directory,
+  file { [
+      $datadir,
+      "${datadir}/backup",
+      "${datadir}/postgres",
+      "${datadir}/mqtt_config",
+      "${datadir}/mqtt_data",
+    ]:
+      ensure => directory,
   }
 
   docker::container { 'postgres':
@@ -99,5 +117,38 @@ class teslamate (
       "-e MQTT_HOST=${mqtt_ip}",
     ],
     cmd   => '',
+  }
+
+  file { '/usr/local/bin/teslamate-backup.sh':
+    ensure => file,
+    source => 'puppet:///modules/teslamate/teslamate-backup.sh',
+  }
+
+  file { '/etc/systemd/system/teslamate-backup.service':
+    ensure  => file,
+    content => template('teslamate/teslamate-backup.service.erb'),
+    notify  => Service['teslamate-backup.timer'],
+  }
+
+  file { '/etc/systemd/system/teslamate-backup.timer':
+    ensure => file,
+    source => 'puppet:///modules/teslamate/teslamate-backup.timer',
+    notify => Service['teslamate-backup.timer'],
+  }
+
+  service { 'teslamate-backup.timer':
+    ensure => running,
+    enable => true,
+  }
+
+  if $backup_target != '' {
+    backup::repo { 'teslamate':
+      source        => "${datadir}/backup",
+      target        => $backup_target,
+      watchdog_url  => $backup_watchdog,
+      password      => $backup_password,
+      environment   => $backup_environment,
+      rclone_config => $backup_rclone,
+    }
   }
 }

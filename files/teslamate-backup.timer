@@ -1,0 +1,8 @@
+[Unit]
+Description=Schedule backups for teslamate postgres
+
+[Timer]
+OnUnitActiveSec=3600
+
+[Install]
+WantedBy=multi-user.target
