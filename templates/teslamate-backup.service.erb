@@ -3,7 +3,7 @@ Description=Run backup for teslamate postgres
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/teslamate-backup.sh
+ExecStart=/usr/local/bin/teslamate-backup.sh <%= @datadir + '/backup' %>
 <% if @postgres_watchdog -%>
 ExecStartPost=/usr/bin/curl <%= @postgres_watchdog %>
 <% end -%>

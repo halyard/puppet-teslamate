@@ -142,6 +142,12 @@ class teslamate (
     enable => true,
   }
 
+  tidy { "${datadir}/backup":
+    age     => '30d',
+    recurse => true,
+    matches => 'dump_.*',
+  }
+
   if $backup_target != '' {
     backup::repo { 'teslamate':
       source        => "${datadir}/backup",
