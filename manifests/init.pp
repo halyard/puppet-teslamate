@@ -122,6 +122,7 @@ class teslamate (
   file { '/usr/local/bin/teslamate-backup.sh':
     ensure => file,
     source => 'puppet:///modules/teslamate/teslamate-backup.sh',
+    mode   => '0755',
   }
 
   file { '/etc/systemd/system/teslamate-backup.service':
