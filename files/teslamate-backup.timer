@@ -2,6 +2,7 @@
 Description=Schedule backups for teslamate postgres
 
 [Timer]
+OnBootSec=600
 OnUnitActiveSec=3600
 
 [Install]
