@@ -142,10 +142,18 @@ class teslamate (
     enable => true,
   }
 
-  tidy { "${datadir}/backup":
-    age     => '30d',
+  tidy { "${datadir}/backup weekly":
+    path    => "${datadir}/backup",
+    age     => '1d',
     recurse => true,
-    matches => 'dump_.*',
+    matches => 'dump_??????{01,07,14,21,28}-??????.sql',
+  }
+
+  tidy { "${datadir}/backup all":
+    path    => "${datadir}/backup",
+    age     => '14d',
+    recurse => true,
+    matches => 'dump_*.sql',
   }
 
   if $backup_target != '' {

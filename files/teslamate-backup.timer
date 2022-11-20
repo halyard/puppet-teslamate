@@ -3,7 +3,7 @@ Description=Schedule backups for teslamate postgres
 
 [Timer]
 OnBootSec=600
-OnUnitActiveSec=3600
+OnUnitActiveSec=36000
 
 [Install]
 WantedBy=multi-user.target
